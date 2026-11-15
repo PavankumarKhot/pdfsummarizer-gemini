@@ -7,7 +7,9 @@ from streamlit.testing.v1 import AppTest
 APP = Path(__file__).resolve().parents[1] / "app.py"
 
 
-def test_app_boots_without_exception() -> None:
+def test_app_boots_without_exception(monkeypatch) -> None:
+    # CI has no .env; a dummy key is enough because no model call happens on boot.
+    monkeypatch.setenv("GEMINI_API_KEY", "x" * 40)
     app = AppTest.from_file(str(APP), default_timeout=30).run()
 
     assert not app.exception
